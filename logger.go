@@ -2,14 +2,11 @@ package ext
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 	"path/filepath"
-	"strings"
 
 	"github.com/nevata/session"
 	"github.com/nevata/txtcolor"
@@ -21,29 +18,6 @@ var debugfile string = filepath.Join(ExeDir, debug)
 //Log 记录访问日志
 func Log(inner session.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		//解析json
-		if r.Method == "POST" || r.Method == "PUT" || r.Method == "PATCH" {
-			//NZ_RPC不标准，发送json数据时，没有带这个标记过来
-			contentType := r.Header.Get("Content-Type")
-			if strings.Contains(contentType, "application/json") || contentType == "" {
-				params := make(map[string]string)
-				if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
-					if err != io.EOF {
-						HandleError(w, err)
-						return
-					}
-				}
-
-				if r.Form == nil {
-					r.Form = make(url.Values)
-				}
-
-				for k, v := range params {
-					r.Form.Set(k, v)
-				}
-			}
-		}
-
 		//输出log
 		if FileExist(debugfile) {
 			buf := bytes.NewBuffer(nil)
@@ -58,14 +32,18 @@ func Log(inner session.Handler) http.Handler {
 			//log.Printf("RemoteAddr = %q\n", r.RemoteAddr)
 			buf.WriteString(fmt.Sprintf("Host = %q\n", r.Host))
 			buf.WriteString(fmt.Sprintf("RemoteAddr = %q\n", r.RemoteAddr))
-			if err := r.ParseForm(); err != nil {
-				log.Println(err)
+			var bodyBytes []byte
+			if r.Request.Body != nil {
+				// 把request的内容读取出来
+				bodyBytes, err = ioutil.ReadAll(c.Request.Body)
+				if err != nil {
+					HandleError(w, err)
+					return
+				}
+				// 把刚刚读出来的再写进去
+				r.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 			}
-
-			for k, v := range r.Form {
-				//log.Printf("Form[%q] = %q\n", k, v)
-				buf.WriteString(fmt.Sprintf("Form[%q] = %q\n", k, v))
-			}
+			buf.WriteString(fmt.Sprintf("Body = %s\n", string(bodyBytes)))
 			buf.WriteString("\n")
 			log.Print(buf.String())
 		}
