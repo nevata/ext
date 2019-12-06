@@ -33,15 +33,15 @@ func Log(inner session.Handler) http.Handler {
 			buf.WriteString(fmt.Sprintf("Host = %q\n", r.Host))
 			buf.WriteString(fmt.Sprintf("RemoteAddr = %q\n", r.RemoteAddr))
 			var bodyBytes []byte
-			if r.Request.Body != nil {
+			if r.Body != nil {
 				// 把request的内容读取出来
-				bodyBytes, err = ioutil.ReadAll(c.Request.Body)
+				bodyBytes, err := ioutil.ReadAll(r.Body)
 				if err != nil {
 					HandleError(w, err)
 					return
 				}
 				// 把刚刚读出来的再写进去
-				r.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+				r.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 			}
 			buf.WriteString(fmt.Sprintf("Body = %s\n", string(bodyBytes)))
 			buf.WriteString("\n")
