@@ -16,7 +16,7 @@ import (
 var debug = "debug_print"
 
 //debugfile 日志文件路径
-var debugfile string = filepath.Join(ExeDir, debug)
+var debugfile = filepath.Join(ExeDir, debug)
 
 //Log 记录访问日志
 func Log(inner session.Handler) http.Handler {
@@ -38,15 +38,18 @@ func Log(inner session.Handler) http.Handler {
 			var bodyBytes []byte
 			if r.Body != nil {
 				// 把request的内容读取出来
-				bodyBytes, err := ioutil.ReadAll(r.Body)
+				buf, err := ioutil.ReadAll(r.Body)
 				if err != nil {
 					HandleError(w, err)
 					return
 				}
 				// 把刚刚读出来的再写进去
-				r.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+				bodyBytes = buf
+				r.Body = ioutil.NopCloser(bytes.NewBuffer(buf))
 			}
-			buf.WriteString(fmt.Sprintf("Body = %s\n", string(bodyBytes)))
+			if len(bodyBytes) > 0 {
+				buf.WriteString(fmt.Sprintf("Body = %s\n", string(bodyBytes)))
+			}
 			buf.WriteString("\n")
 			log.Print(buf.String())
 		}
