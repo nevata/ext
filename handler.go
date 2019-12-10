@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+//HandleError 错误返回
 func HandleError(w http.ResponseWriter, e error) {
 	err := json.NewEncoder(w).Encode(map[string]interface{}{
 		"result":  false,
@@ -16,6 +17,7 @@ func HandleError(w http.ResponseWriter, e error) {
 	}
 }
 
+//HandleSuccess 成功返回
 func HandleSuccess(w http.ResponseWriter, data interface{}) {
 	err := json.NewEncoder(w).Encode(map[string]interface{}{
 		"result": true,

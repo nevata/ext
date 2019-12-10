@@ -12,7 +12,10 @@ import (
 	"github.com/nevata/txtcolor"
 )
 
+//debug 日志输出文件标识
 var debug = "debug_print"
+
+//debugfile 日志文件路径
 var debugfile string = filepath.Join(ExeDir, debug)
 
 //Log 记录访问日志
