@@ -1,0 +1,4 @@
+github.com/nevata/session v0.0.0-20191205080154-202e12764498 h1:2Cho3zLupjSZL+6gsE0mf10mdWsyZMDx9kG7c8+f2mM=
+github.com/nevata/session v0.0.0-20191205080154-202e12764498/go.mod h1:Sw+dpIUbQ51lFcY5vbkVZvDqPubkXM5zdaSPz3q7SYw=
+github.com/nevata/txtcolor v0.0.0-20180402125809-7bc901f6614f h1:edPEs4yAt0e7+mdlvVACkUwT5+gvX4LTntLMECHgSMc=
+github.com/nevata/txtcolor v0.0.0-20180402125809-7bc901f6614f/go.mod h1:BSQLqS0uEKsI2DG2eKZQL98a09V6kE3SpRm51EL2yLg=
