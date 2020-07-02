@@ -16,7 +16,7 @@ import (
 var debug = "debug_print"
 
 //debugfile 日志文件路径
-var debugfile = filepath.Join(ExeDir, debug)
+var debugfile = filepath.Join(MustGetAppPath(), debug)
 
 //Log 记录访问日志
 func Log(inner session.Handler) http.Handler {
