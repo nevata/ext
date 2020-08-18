@@ -84,3 +84,13 @@ func Post(url string, o interface{}) (resp *http.Response, err error) {
 	}
 	return http.DefaultClient.Do(req)
 }
+
+//FormValue 获取请求参数
+func FormValue(r *http.Request, key string) (string, bool) {
+	v := r.FormValue(key)
+	if v == "" {
+		_, b := r.Form[key]
+		return v, b
+	}
+	return v, true
+}
