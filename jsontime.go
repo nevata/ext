@@ -3,6 +3,7 @@ package ext
 import (
 	"database/sql/driver"
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -15,6 +16,16 @@ type JSONTime struct {
 func (t JSONTime) MarshalJSON() ([]byte, error) {
 	formatted := fmt.Sprintf("\"%s\"", t.Format("2006-01-02 15:04:05"))
 	return []byte(formatted), nil
+}
+
+//
+func (t JSONTime) UnmarshalJSON(b []byte) error {
+	time, err := StrToTime(strings.Trim(string(b), "\""))
+	if err != nil {
+		return err
+	}
+	t.Time = time
+	return nil
 }
 
 // Value insert timestamp into mysql need this function.
