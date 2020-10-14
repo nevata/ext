@@ -36,3 +36,12 @@ func MustGetAppPath() string {
 	}
 	return s
 }
+
+//JSONTimeToStr 转换jsontime对象指针，空指针返回空字符串
+func JSONTimeToStr(jsonTime *JSONTime) string {
+	if jsonTime != nil {
+		return TimeToStr(jsonTime.Time)
+	} else {
+		return ""
+	}
+}
