@@ -22,12 +22,12 @@ func checkFilterStr(filterStr string) error {
 }
 
 //Parse2M 读取请求参数的pageSize,pageIndex两个参数
-func Parse2M(r *http.Request) (pageIndex, pageSize int64, err error) {
+func Parse2M(r *http.Request) (pageIndex, pageSize int, err error) {
 	if err := r.ParseForm(); err != nil {
 		return 0, 0, err
 	}
 
-	pageSize, err = strconv.ParseInt(r.FormValue("pageSize"), 10, 64)
+	pageSize, err = strconv.Atoi(r.FormValue("pageSize"))
 	if err != nil {
 		pageSize = 10
 	}
@@ -35,7 +35,7 @@ func Parse2M(r *http.Request) (pageIndex, pageSize int64, err error) {
 		pageSize = 100
 	}
 
-	pageIndex, err = strconv.ParseInt(r.FormValue("pageIndex"), 10, 64)
+	pageIndex, err = strconv.Atoi(r.FormValue("pageIndex"))
 	if err != nil {
 		pageIndex = 0
 	}
@@ -44,7 +44,7 @@ func Parse2M(r *http.Request) (pageIndex, pageSize int64, err error) {
 }
 
 //Parse3M 读取请求参数的pageSize,pageIndex,filterStr三个参数
-func Parse3M(r *http.Request) (filterStr string, pageIndex, pageSize int64, err error) {
+func Parse3M(r *http.Request) (filterStr string, pageIndex, pageSize int, err error) {
 	pageIndex, pageSize, err = Parse2M(r)
 	if err != nil {
 		return "", 0, 0, err
@@ -61,7 +61,7 @@ func Parse3M(r *http.Request) (filterStr string, pageIndex, pageSize int64, err 
 }
 
 //Parse4M 读取请求参数的pageSize,pageIndex,filterStr,order四个参数
-func Parse4M(r *http.Request) (filterStr string, pageIndex, pageSize int64, order string, err error) {
+func Parse4M(r *http.Request) (filterStr string, pageIndex, pageSize int, order string, err error) {
 	filterStr, pageIndex, pageSize, err = Parse3M(r)
 	if err != nil {
 		return "", 0, 0, "", err
