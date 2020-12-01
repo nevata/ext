@@ -1,15 +1,33 @@
 package ext
 
 import (
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
+	"runtime/debug"
 )
 
-//FileExist 文件和目录判断
+//FileExist 文件判断
 func FileExist(path string) bool {
-	_, err := os.Stat(path)
+	info, err := os.Stat(path)
 	if err != nil && os.IsNotExist(err) {
+		return false
+	}
+	if info.IsDir() {
+		return false
+	}
+	return true
+}
+
+//DirExist 目录判断
+func DirExist(path string) bool {
+	info, err := os.Stat(path)
+	if err != nil && os.IsNotExist(err) {
+		return false
+	}
+	if !info.IsDir() {
 		return false
 	}
 	return true
@@ -44,4 +62,17 @@ func JSONTimeToStr(jsonTime *JSONTime) string {
 	} else {
 		return ""
 	}
+}
+
+//VerifyEmailFormat 电子邮箱格式检测
+func VerifyEmailFormat(email string) bool {
+	pattern := `\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*` //匹配电子邮箱
+	reg := regexp.MustCompile(pattern)
+	return reg.MatchString(email)
+}
+
+//PrintErr 输出错误以及堆栈信息
+func PrintErr(err error) {
+	log.Println(err)
+	debug.PrintStack()
 }

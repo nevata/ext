@@ -7,9 +7,17 @@ import (
 const timeLayout = "2006-01-02 15:04:05"
 const dateLayout = "2006-01-02"
 
+//Now 返回当前的UTC时间(精确到秒)
+func Now() time.Time {
+	t := time.Now().UTC()
+	y, m, d := t.Date()
+	h, n, s := t.Clock()
+	return time.Date(y, m, d, h, n, s, 0, t.Location())
+}
+
 //NowToStr 返回当前时间的格式化字符串
 func NowToStr() string {
-	return TimeToStr(time.Now())
+	return TimeToStr(Now())
 }
 
 //TimeToStr 返回时间的格式化字符串

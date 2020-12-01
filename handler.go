@@ -12,6 +12,15 @@ import (
 //SID sessionid
 var SID string
 
+//ErrInternal 内部错误
+var ErrInternal = errors.New("内部错误")
+
+//HandleExcept 处理异常
+func HandleExcept(w http.ResponseWriter, e error) {
+	HandleError(w, ErrInternal)
+	PrintErr(e)
+}
+
 //HandleError 错误返回
 func HandleError(w http.ResponseWriter, e error) {
 	err := json.NewEncoder(w).Encode(map[string]interface{}{

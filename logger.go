@@ -12,11 +12,11 @@ import (
 	"github.com/nevata/txtcolor"
 )
 
-//debug 日志输出文件标识
-var debug = "debug_print"
+//isDebug 日志输出文件标识
+var isDebug = "debug_print"
 
 //debugfile 日志文件路径
-var debugfile = filepath.Join(MustGetAppPath(), debug)
+var debugfile = filepath.Join(MustGetAppPath(), isDebug)
 
 //Log 记录访问日志
 func Log(inner session.Handler) http.Handler {
