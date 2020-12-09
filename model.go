@@ -67,6 +67,7 @@ func WhereBuild(db *sql.DB, id uint, keys map[string]string) (string, []interfac
 		VTDate                          //4 date
 		VTTime                          //5 time
 		VTDateTime                      //6 datetime
+		VTStringEx                      //7 %string%
 	)
 
 	var conditions []struct {
@@ -86,7 +87,10 @@ func WhereBuild(db *sql.DB, id uint, keys map[string]string) (string, []interfac
 	for _, condition := range conditions {
 		val, ok := keys[condition.Key]
 		if condition.Required || ok {
-			where += " " + condition.Val
+			if where != "" {
+				where += " AND "
+			}
+			where += condition.Val
 			if ok {
 				switch condition.VT {
 				case VTInt:
@@ -94,33 +98,35 @@ func WhereBuild(db *sql.DB, id uint, keys map[string]string) (string, []interfac
 					if e != nil {
 						return "", nil, fmt.Errorf("参数[%s]类型不正确", condition.Key)
 					}
-					vals = append(vals, v)
+					vals = append(vals, sql.Named(condition.Key, v))
 				case VTFloat:
 					v, e := strconv.ParseFloat(val, 64)
 					if e != nil {
 						return "", nil, fmt.Errorf("参数[%s]类型不正确", condition.Key)
 					}
-					vals = append(vals, v)
+					vals = append(vals, sql.Named(condition.Key, v))
 				case VTDate:
 					v, e := time.Parse(dateLayout, val)
 					if e != nil {
 						return "", nil, fmt.Errorf("参数[%s]类型不正确", condition.Key)
 					}
-					vals = append(vals, v)
+					vals = append(vals, sql.Named(condition.Key, v))
 				case VTTime:
 					v, e := time.Parse("15:04:05", val)
 					if e != nil {
 						return "", nil, fmt.Errorf("参数[%s]类型不正确", condition.Key)
 					}
-					vals = append(vals, v)
+					vals = append(vals, sql.Named(condition.Key, v))
 				case VTDateTime:
 					v, e := time.Parse(timeLayout, val)
 					if e != nil {
 						return "", nil, fmt.Errorf("参数[%s]类型不正确", condition.Key)
 					}
-					vals = append(vals, v)
+					vals = append(vals, sql.Named(condition.Key, v))
+				case VTStringEx:
+					vals = append(vals, sql.Named(condition.Key, "%"+val+"%"))
 				default:
-					vals = append(vals, val)
+					vals = append(vals, sql.Named(condition.Key, val))
 				}
 			}
 		}
