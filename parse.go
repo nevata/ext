@@ -206,7 +206,7 @@ func Parse(r *http.Request) (
 	}
 
 	page = &Page{
-		Index: pageIndex - 1,
+		Index: pageIndex,
 		Size:  pageSize,
 	}
 
