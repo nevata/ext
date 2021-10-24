@@ -45,14 +45,8 @@ func TestGet(t *testing.T) {
 		tx := db.Begin()
 		defer tx.Rollback()
 
-		sqlDB, err := tx.DB()
-		if err != nil {
-			HandleExcept(c.Writer, err)
-			return
-		}
-
 		if where != nil {
-			query, vals, err := WhereBuild(sqlDB, *where, values)
+			query, vals, err := WhereBuild(tx, *where, values)
 			if err != nil {
 				HandleExcept(c.Writer, err)
 				return
@@ -64,7 +58,7 @@ func TestGet(t *testing.T) {
 		}
 
 		if order != nil {
-			s := OrderByBuild(sqlDB, *order)
+			s := OrderByBuild(tx, *order)
 			t.Log("order", s)
 			if s != "" {
 				tx = tx.Order(s)

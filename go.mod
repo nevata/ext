@@ -1,4 +1,4 @@
-module ext
+module github.com/nevata/ext
 
 go 1.13
 

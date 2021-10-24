@@ -59,9 +59,9 @@ func MustGetAppPath() string {
 func JSONTimeToStr(jsonTime *JSONTime) string {
 	if jsonTime != nil {
 		return TimeToStr(jsonTime.Time)
-	} else {
-		return ""
 	}
+
+	return ""
 }
 
 //VerifyEmailFormat 电子邮箱格式检测

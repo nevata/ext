@@ -49,8 +49,10 @@ type DevWhere struct {
 	Desc       string //备注
 }
 
+//ValueType 值类型
 type ValueType uint8
 
+//支持的值类型
 const (
 	VTInt      ValueType = iota + 1 //1 int
 	VTFloat                         //2 float
@@ -62,6 +64,7 @@ const (
 	VTSubQuery                      //8
 )
 
+//Condition 条件结构定义
 type Condition struct {
 	Key         string       `json:"key"`
 	Val         string       `json:"val"`
@@ -71,7 +74,8 @@ type Condition struct {
 	Conditions  []*Condition `json:"conditions"`
 }
 
-func encodeJson(v interface{}) string {
+//
+func encodeJSON(v interface{}) string {
 	buf, err := json.Marshal(v)
 	if err != nil {
 		panic(err)

@@ -18,7 +18,7 @@ func (t JSONTime) MarshalJSON() ([]byte, error) {
 	return []byte(formatted), nil
 }
 
-//
+//UnmarshalJSON convert string to JSONTime
 func (t *JSONTime) UnmarshalJSON(b []byte) error {
 	time, err := StrToTime(strings.Trim(string(b), "\""))
 	if err != nil {
