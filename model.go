@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -153,7 +152,6 @@ func parseConditions(
 					condition, keys, val, builder, vals); err != nil {
 					return err
 				}
-				log.Println("parseConditions:", vals)
 			}
 		}
 	}
