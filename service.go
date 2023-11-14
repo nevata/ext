@@ -1,5 +1,10 @@
 package ext
 
+import (
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
+)
+
 type Service struct {
 	innerWhere string
 	where      *uint
@@ -7,7 +12,7 @@ type Service struct {
 	order      *uint
 	page       *ext.Page
 	model      interface{}
-  db         *gorm.DB
+        db         *gorm.DB
 }
 
 //Add 新增
