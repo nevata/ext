@@ -10,12 +10,12 @@ type Service struct {
 	where      *uint
 	values     map[string]string
 	order      *uint
-	page       *ext.Page
+	page       *Page
 	model      interface{}
-        db         *gorm.DB
+	db         *gorm.DB
 }
 
-//Add 新增
+// Add 新增
 func (s *Service) Add(value interface{}) error {
 	tx := s.db.Begin()
 	if err := tx.Create(value).Error; err != nil {
@@ -26,7 +26,7 @@ func (s *Service) Add(value interface{}) error {
 	return nil
 }
 
-//Edit 修改
+// Edit 修改
 func (s *Service) Edit(value interface{}) error {
 	tx := s.db.Begin()
 	if err := tx.Save(value).Error; err != nil {
@@ -37,7 +37,7 @@ func (s *Service) Edit(value interface{}) error {
 	return nil
 }
 
-//Delete 删除
+// Delete 删除
 func (s *Service) Delete(id uint) error {
 	tx := s.db.Begin()
 	if err := tx.Delete(&s.model, id).Error; err != nil {
@@ -48,7 +48,7 @@ func (s *Service) Delete(id uint) error {
 	return nil
 }
 
-//Take 查询
+// Take 查询
 func (s *Service) Take(id uint, dest interface{}) error {
 	tx := s.db.Begin()
 
@@ -63,7 +63,7 @@ func (s *Service) Take(id uint, dest interface{}) error {
 	return nil
 }
 
-//Fetch 查询
+// Fetch 查询
 func (s *Service) Fetch(datas interface{}, total *int64) error {
 	scopes := []func(*gorm.DB) *gorm.DB{}
 
@@ -74,7 +74,7 @@ func (s *Service) Fetch(datas interface{}, total *int64) error {
 	}
 
 	if s.where != nil {
-		query, vals, err := ext.WhereBuild(s.db, *s.where, s.values)
+		query, vals, err := WhereBuild(s.db, *s.where, s.values)
 		if err != nil {
 			return err
 		}
@@ -92,7 +92,7 @@ func (s *Service) Fetch(datas interface{}, total *int64) error {
 	}
 
 	if s.order != nil {
-		s := ext.OrderByBuild(s.db, *s.order)
+		s := OrderByBuild(s.db, *s.order)
 		if s != "" {
 			scopes = append(scopes, func(db *gorm.DB) *gorm.DB {
 				return db.Order(s)
