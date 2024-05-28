@@ -9,22 +9,25 @@ import (
 	"net/http"
 )
 
-//SID sessionid
+// SID sessionid
 var SID string
 
-//ErrInternal 内部错误
+// ErrInternal 内部错误
 var ErrInternal = errors.New("内部错误")
 
-//HandleExcept 处理异常
+// ErrSign 签名不正确
+var ErrSign = errors.New("签名不正确")
+
+// HandleExcept 处理异常
 func HandleExcept(w http.ResponseWriter, e error) {
 	HandleError(w, ErrInternal)
 	PrintErr(e)
 }
 
-//HandleError 错误返回
+// HandleError 错误返回
 func HandleError(w http.ResponseWriter, e error) {
 	err := json.NewEncoder(w).Encode(map[string]interface{}{
-		"result":  false,
+		"code":    -1,
 		"message": e.Error(),
 	})
 
@@ -33,11 +36,11 @@ func HandleError(w http.ResponseWriter, e error) {
 	}
 }
 
-//HandleSuccess 成功返回
+// HandleSuccess 成功返回
 func HandleSuccess(w http.ResponseWriter, data interface{}) {
 	err := json.NewEncoder(w).Encode(map[string]interface{}{
-		"result": true,
-		"data":   data,
+		"code": 0,
+		"data": data,
 	})
 
 	if err != nil {
@@ -45,7 +48,7 @@ func HandleSuccess(w http.ResponseWriter, data interface{}) {
 	}
 }
 
-//HandleMessage 检查错误并返回data
+// HandleMessage 检查错误并返回data
 func HandleMessage(resp *http.Response) (json.RawMessage, error) {
 	if resp.StatusCode != 200 {
 		return nil, errors.New(resp.Status)
@@ -64,7 +67,7 @@ func HandleMessage(resp *http.Response) (json.RawMessage, error) {
 	return msg.Data, nil
 }
 
-//HandleSID 处理返回的sid
+// HandleSID 处理返回的sid
 func HandleSID(data json.RawMessage) error {
 	var sess struct {
 		SID string `json:"sid"`
@@ -76,7 +79,7 @@ func HandleSID(data json.RawMessage) error {
 	return nil
 }
 
-//Post 用json格式发送
+// Post 用json格式发送
 func Post(url string, o interface{}) (resp *http.Response, err error) {
 	body := new(bytes.Buffer)
 	if err := json.NewEncoder(body).Encode(o); err != nil {
@@ -94,7 +97,7 @@ func Post(url string, o interface{}) (resp *http.Response, err error) {
 	return http.DefaultClient.Do(req)
 }
 
-//FormValue 获取请求参数
+// FormValue 获取请求参数
 func FormValue(r *http.Request, key string) (string, bool) {
 	v := r.FormValue(key)
 	if v == "" {
@@ -102,4 +105,22 @@ func FormValue(r *http.Request, key string) (string, bool) {
 		return v, b
 	}
 	return v, true
+}
+
+// CheckSign API接口校验签名
+func CheckSign(exchange func(apiKey string) string, r *http.Request) error {
+	sign := r.FormValue("sign")
+	r.Form.Del("sign")
+
+	apiKey := r.FormValue("api_key")
+	secretKey := exchange(apiKey)
+
+	val, err := NewSigner(r.Form, secretKey).Sign()
+	if err != nil {
+		return err
+	}
+
+	if sign != val {
+		return ErrSign
+	}
 }
