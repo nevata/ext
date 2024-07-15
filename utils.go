@@ -4,10 +4,12 @@ import (
 	"crypto/md5"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
 	"runtime/debug"
+	"strings"
 )
 
 // FileExist 文件判断
@@ -79,4 +81,14 @@ func HandlePassword(pwd, seed string) (s string) {
 	s = fmt.Sprintf("%s&%s", pwd, seed)
 	s = fmt.Sprintf("%x", md5.Sum([]byte(s)))
 	return
+}
+
+// GetIP 获取客户端IP
+func GetIP(r *http.Request) string {
+	remoteAddr := r.RemoteAddr
+	forwarded := r.Header.Get("X-FORWARDED-FOR")
+	if forwarded != "" {
+		remoteAddr = strings.Split(forwarded, ",")[0]
+	}
+	return strings.Split(remoteAddr, ":")[0]
 }

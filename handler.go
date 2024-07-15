@@ -123,4 +123,6 @@ func CheckSign(exchange func(apiKey string) string, r *http.Request) error {
 	if sign != val {
 		return ErrSign
 	}
+
+	return nil
 }
