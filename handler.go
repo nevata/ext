@@ -54,14 +54,14 @@ func HandleMessage(resp *http.Response) (json.RawMessage, error) {
 		return nil, errors.New(resp.Status)
 	}
 	var msg struct {
-		Result bool            `json:"result"`
-		Msg    string          `json:"message"`
-		Data   json.RawMessage `json:"data"`
+		Code int32           `json:"code"`
+		Msg  string          `json:"message"`
+		Data json.RawMessage `json:"data"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&msg); err != nil {
 		return nil, err
 	}
-	if msg.Result == false {
+	if msg.Code != 0 {
 		return nil, errors.New(msg.Msg)
 	}
 	return msg.Data, nil
